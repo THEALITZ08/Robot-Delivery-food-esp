@@ -23,7 +23,7 @@ Robot terdiri dari tiga node utama.
 
 ## 📱 Controller Node
 
-ESP32
+ESP32 devkit v4
 
 Responsibilities
 
@@ -37,7 +37,7 @@ Responsibilities
 
 ## 🚗 Rover Node
 
-ESP32 + FreeRTOS
+ESP32 devkit v1 + FreeRTOS
 
 Responsibilities
 
