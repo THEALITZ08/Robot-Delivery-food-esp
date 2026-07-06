@@ -1,9 +1,8 @@
+
 ```markdown
 # 🤖 Food Delivery Rover with RTOS, PID Control & Edge Vision
 
 A highly reliable, fault-tolerant autonomous food delivery robot. Built with a distributed architecture using three ESP32 nodes communicating via ESP-NOW. Features FreeRTOS for multitasking, a custom Ultrasonic PID controller for smooth braking, Telegram Bot integration for secure PIN verification, and Edge-to-Server Computer Vision using YOLOv3.
-
-```
 
 ---
 
@@ -11,9 +10,9 @@ A highly reliable, fault-tolerant autonomous food delivery robot. Built with a d
 
 Sistem ini dipecah menjadi 3 *node* terpisah untuk memastikan kestabilan dan membagi beban komputasi:
 
-1. **📱 Transmitter Node (Controller):** Mengelola interaksi *user* via Telegram Bot, men-*generate* PIN acak untuk keamanan pengambilan makanan, dan mengirim perintah secara nirkabel[span_0](start_span)[span_0](end_span).
-2. **🏎️ Rover Node (Receiver):** Otak penggerak robot yang menjalankan **FreeRTOS** untuk mengeksekusi navigasi FSM. Dilengkapi dengan **Ultrasonic PID Control** (`kp = 3.0, ki = 0.5, kd = 1.0`) untuk pengereman yang *smooth*, pengaturan layar OLED, dan pemantauan sinyal RSSI[span_1](start_span)[span_1](end_span).
-3. **👁️ Vision Node (ESP32-CAM):** Bertindak sebagai *Edge Device* yang melakukan *streaming* video latensi rendah ke laptop/server untuk diproses oleh model AI YOLOv3[span_2](start_span)[span_2](end_span).
+1. **📱 Transmitter Node (Controller):** Mengelola interaksi *user* via Telegram Bot, men-*generate* PIN acak untuk keamanan pengambilan makanan, dan mengirim perintah secara nirkabel.
+2. **🏎️ Rover Node (Receiver):** Otak penggerak robot yang menjalankan **FreeRTOS** untuk mengeksekusi navigasi FSM. Dilengkapi dengan **Ultrasonic PID Control** (`kp = 3.0, ki = 0.5, kd = 1.0`) untuk pengereman yang *smooth*, pengaturan layar OLED, dan pemantauan sinyal RSSI.
+3. **👁️ Vision Node (ESP32-CAM):** Bertindak sebagai *Edge Device* yang melakukan *streaming* video latensi rendah ke laptop/server untuk diproses oleh model AI YOLOv3.
 
 ---
 
@@ -55,7 +54,6 @@ graph TD
     CAM -- HTTP Video Stream --> YOLO
 
 ```
-
 ## ✨ Advanced Features
  * **⚡ FreeRTOS Integration:** Sensor pembacaan, navigasi FSM, dan komunikasi ESP-NOW berjalan di *task* independen menggunakan Queue (xQueueSend & xQueueReceive) untuk arsitektur *non-blocking*.
  * **🎛️ Ultrasonic PID Closed-Loop:** Mengimplementasikan kalkulasi *Proportional-Integral-Derivative* (PID) murni berbasis jarak target untuk menghasilkan akselerasi dan pengereman yang presisi tanpa *rotary encoder*. Dilengkapi juga dengan mekanisme *Anti-Windup*.
@@ -85,3 +83,4 @@ Navigasi robot diatur dengan konsep *Finite State Machine* (FSM):
  5. **SELESAI:** PIN benar, robot berputar arah dan kembali ke posisi *idle*.
 ```
 
+```
