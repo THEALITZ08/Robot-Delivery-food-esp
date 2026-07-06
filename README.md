@@ -1,86 +1,370 @@
+# 🤖 Autonomous Food Delivery Rover
+### FreeRTOS • ESP-NOW • YOLOv3 • PID Controller • ESP32-CAM
 
-```mermaid
-# 🤖 Food Delivery Rover with RTOS, PID Control & Edge Vision
+Autonomous food delivery robot built with a distributed embedded architecture using multiple ESP32 boards.
 
-A highly reliable, fault-tolerant autonomous food delivery robot. Built with a distributed architecture using three ESP32 nodes communicating via ESP-NOW. Features FreeRTOS for multitasking, a custom Ultrasonic PID controller for smooth braking, Telegram Bot integration for secure PIN verification, and Edge-to-Server Computer Vision using YOLOv3.
+The project combines:
+
+- 🚗 Autonomous navigation
+- 📷 Computer Vision (YOLOv3)
+- 📡 ESP-NOW communication
+- ⚙️ FreeRTOS multitasking
+- 🎯 PID distance control
+- 🔐 Telegram Bot authentication
+- 📺 OLED user interface
+
+Unlike a traditional line follower, this robot performs autonomous navigation while communicating with multiple embedded nodes in real time.
 
 ---
 
-## 🌟 Core Architecture
+# 📷 Project Preview
 
-Sistem ini dipecah menjadi 3 *node* terpisah untuk memastikan kestabilan dan membagi beban komputasi:
+> Tambahkan foto robot di sini
 
-1. **📱 Transmitter Node (Controller):** Mengelola interaksi *user* via Telegram Bot, men-*generate* PIN acak untuk keamanan pengambilan makanan, dan mengirim perintah secara nirkabel.
-2. **🏎️ Rover Node (Receiver):** Otak penggerak robot yang menjalankan **FreeRTOS** untuk mengeksekusi navigasi FSM. Dilengkapi dengan **Ultrasonic PID Control** (`kp = 3.0, ki = 0.5, kd = 1.0`) untuk pengereman yang *smooth*, pengaturan layar OLED, dan pemantauan sinyal RSSI.
-3. **👁️ Vision Node (ESP32-CAM):** Bertindak sebagai *Edge Device* yang melakukan *streaming* video latensi rendah ke laptop/server untuk diproses oleh model AI YOLOv3.
+```
+images/
+ ├── robot.jpg
+ ├── rover.jpg
+ ├── transmitter.jpg
+ ├── esp32cam.jpg
+```
 
 ---
 
-## 🧠 System Topology
+# 🎥 Demo
+
+Tambahkan link YouTube
+
+https://youtube.com/......
+
+---
+
+# 🧠 System Architecture
+
+Robot terdiri dari tiga node utama.
+
+## 📱 Controller Node
+
+ESP32
+
+Responsibilities
+
+- Telegram Bot
+- Generate PIN
+- Send command
+- Receive RSSI
+- ESP-NOW Master
+
+---
+
+## 🚗 Rover Node
+
+ESP32 + FreeRTOS
+
+Responsibilities
+
+- Finite State Machine
+- PID Control
+- Ultrasonic
+- Motor Driver
+- OLED Animation
+- RSSI Monitoring
+
+---
+
+## 📷 Vision Node
+
+ESP32-CAM
+
+Responsibilities
+
+- HTTP Video Streaming
+- ArUco Detection
+- YOLOv3 Detection
+
+---
+
+# 🧩 System Topology
 
 ```mermaid
 graph TD
-    subgraph User Control
-        TG[Telegram Bot]
-    end
 
-    subgraph Transmitter Node
-        TX[ESP32 Controller]
-    end
+USER[User]
 
-    subgraph Rover Node
-        RX[ESP32 Rover & FreeRTOS]
-        PID[PID Braking System]
-        OLED[OLED Faces]
-        MOTOR[Motor Driver]
-        SONAR[Ultrasonic Sensor]
-    end
-    
-    subgraph Vision System
-        CAM[ESP32-CAM]
-        YOLO[Laptop / YOLOv3 AI]
-    end
+TG[Telegram Bot]
 
-    TG -- Command / PIN --> TX
-    TX -- Telegram API --> TG
-    TX -- ESP-NOW / Channel 13 --> RX
-    RX -- ESP-NOW / RSSI Status --> TX
-    
-    RX --> PID
-    PID --> MOTOR
-    RX --> OLED
-    RX --> SONAR
+CTRL[ESP32 Controller]
 
-    CAM -- HTTP Video Stream --> YOLO
+ROVER[ESP32 Rover]
 
-```
-## ✨ Advanced Features
- * **⚡ FreeRTOS Integration:** Sensor pembacaan, navigasi FSM, dan komunikasi ESP-NOW berjalan di *task* independen menggunakan Queue (xQueueSend & xQueueReceive) untuk arsitektur *non-blocking*.
- * **🎛️ Ultrasonic PID Closed-Loop:** Mengimplementasikan kalkulasi *Proportional-Integral-Derivative* (PID) murni berbasis jarak target untuk menghasilkan akselerasi dan pengereman yang presisi tanpa *rotary encoder*. Dilengkapi juga dengan mekanisme *Anti-Windup*.
- * **⚙️ Hardware Compensation Logic:** Menerapkan kalibrasi *offset* dinamis (pwm2 = basePwm + 30) pada motor B untuk mengompensasi kelemahan traksi fisik, memastikan laju robot tetap lurus.
- * **🛜 Ultra-Low Latency ESP-NOW:** Komunikasi langsung antar *node* (Rover & Transmitter) di Channel 13 tanpa bergantung pada *router* WiFi eksternal.
- * **🔐 Secure PIN Validation:** Robot akan menghasilkan 4 digit PIN acak ketika sampai di tujuan. Pengguna harus memasukkan PIN via Telegram untuk memvalidasi pengantaran.
- * **🤖 Dynamic UI/UX:** Dilengkapi layar OLED yang menampilkan ekspresi robot (*Senyum, Marah, Datar, Tulus*, dll) secara *real-time* sesuai dengan kondisinya.
-## 🛠️ Hardware & Pin Mapping
-### 1. Rover Node (Receiver)
-| Component | Pin ESP32 | Function |
-|---|---|---|
-| **Motor L298N** | 12, 13, 14, 33 | IN1, IN2, IN3, IN4 |
-| **Motor PWM** | 26, 15 | ENA, ENB |
-| **Ultrasonic HC-SR04** | 16, 17 | TRIG, ECHO |
-| **OLED 128x64** | 21, 22 | SDA, SCL (I2C) |
-### 2. Transmitter Node (Controller)
-| Component | Pin ESP32 | Function |
-|---|---|---|
-| **7-Segment/LED** | 12, 13, 14 | Indikator Status |
-| **Buzzer** | 16 | Alarm Notifikasi |
-## ⚙️ FSM States (Rover)
-Navigasi robot diatur dengan konsep *Finite State Machine* (FSM):
- 1. **IDLE:** Menunggu instruksi (berwajah datar), motor mati.
- 2. **JALAN:** Robot bergerak maju (berwajah senyum) dikendalikan kalkulasi PID berdasarkan jarak halangan.
- 3. **HALANGAN:** Terdeteksi halangan < 20cm, robot melakukan manuver menghindar (berwajah kaget).
- 4. **SAMPAI:** Mencapai tujuan (berdasarkan RSSI), meminta input PIN (berwajah tulus).
- 5. **SELESAI:** PIN benar, robot berputar arah dan kembali ke posisi *idle*.
+CAM[ESP32-CAM]
+
+YOLO[YOLOv3]
+
+OLED[OLED Display]
+
+SONAR[HC-SR04]
+
+PID[PID Controller]
+
+MOTOR[L298N Driver]
+
+USER --> TG
+
+TG --> CTRL
+
+CTRL -->|ESP-NOW| ROVER
+
+ROVER -->|RSSI| CTRL
+
+ROVER --> SONAR
+
+SONAR --> PID
+
+PID --> MOTOR
+
+ROVER --> OLED
+
+CAM -->|HTTP Stream| YOLO
 ```
 
+---
+
+# ⚙️ Finite State Machine
+
+```mermaid
+stateDiagram-v2
+
+[*] --> IDLE
+
+IDLE --> MOVE : Delivery Command
+
+MOVE --> OBSTACLE : Distance < Threshold
+
+OBSTACLE --> MOVE : Path Clear
+
+MOVE --> DESTINATION : Marker Detected
+
+DESTINATION --> VERIFY_PIN
+
+VERIFY_PIN --> RETURN : PIN Valid
+
+RETURN --> IDLE
 ```
+
+---
+
+# 🧠 PID Control
+
+Robot menggunakan PID Controller berbasis sensor ultrasonik.
+
+Formula
+
+```
+error = targetDistance - currentDistance
+
+P = Kp × error
+
+I = Ki × totalError
+
+D = Kd × (error - lastError)
+
+Output = P + I + D
+```
+
+Parameter
+
+| Parameter | Value |
+|-----------|------:|
+| Kp | 3.0 |
+| Ki | 0.5 |
+| Kd | 1.0 |
+
+---
+
+# ⚡ FreeRTOS Tasks
+
+| Task | Function |
+|------|----------|
+| Navigation Task | FSM Navigation |
+| ESP-NOW Task | Communication |
+| OLED Task | Animation |
+| Sensor Task | Ultrasonic |
+| Queue Task | Command Processing |
+
+---
+
+# 📦 Queue Communication
+
+```
+Telegram
+
+↓
+
+ESP-NOW
+
+↓
+
+Queue
+
+↓
+
+FSM
+
+↓
+
+Motor
+```
+
+Queue digunakan supaya setiap command diproses secara berurutan tanpa blocking.
+
+---
+
+# 📡 Wireless Communication
+
+Protocol
+
+ESP-NOW
+
+Channel
+
+13
+
+Data
+
+- Command
+- RSSI
+- Navigation
+- Status
+
+---
+
+# 👁 Computer Vision
+
+Robot menggunakan dua metode.
+
+## ArUco Marker
+
+- Navigation
+- Position Correction
+- Marker Retry
+
+## YOLOv3
+
+- Object Detection
+- Human Detection
+- Delivery Validation
+
+---
+
+# 🖥 OLED Animation
+
+Robot memiliki beberapa ekspresi.
+
+- 😊 Senyum
+- 😐 Normal
+- 😮 Kaget
+- 😠 Marah
+- 😭 Nangis
+- 🙂 Tulus
+
+Ekspresi berubah mengikuti kondisi robot secara real-time.
+
+---
+
+# 🔐 Telegram Authentication
+
+Flow
+
+User
+
+↓
+
+Telegram Bot
+
+↓
+
+Random PIN
+
+↓
+
+Robot
+
+↓
+
+Input PIN
+
+↓
+
+Valid
+
+↓
+
+Robot Return
+
+---
+
+# 🛠 Hardware
+
+## Rover
+
+| Component | GPIO |
+|-----------|------|
+| L298N | 12 13 14 33 |
+| PWM | 15 26 |
+| HC-SR04 | 16 17 |
+| OLED | SDA 21 SCL 22 |
+
+---
+
+## Controller
+
+| Component | GPIO |
+|-----------|------|
+| Buzzer | 16 |
+| Indicator LED | 12 13 14 |
+
+---
+
+# 💻 Software Stack
+
+- Arduino IDE
+- FreeRTOS
+- ESP-NOW
+- PubSubClient
+- ESP32Servo
+- ArduinoJson
+- OpenCV
+- YOLOv3
+- Python
+
+---
+
+# 📁 Project Structure
+
+```
+Controller/
+Receiver/
+ESP32CAM/
+YOLO/
+Images/
+README.md
+```
+
+---
+
+# 🚀 Features
+
+- ✅ ESP-NOW
+- ✅ FreeRTOS
+- ✅ Queue
+- ✅ PID
+- ✅ OLED UI
+- ✅ Telegram Bot
+- ✅ RSSI Monitoring
+- ✅ ArUco Navigation
+- ✅ YOLOv3
+- ✅ Retry Marker
+- ✅ Autonomous Delivery
+
+---
