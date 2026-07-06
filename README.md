@@ -131,29 +131,18 @@ RETURN --> IDLE
 
 ---
 
-# 🎯 PID Controller
-
+# 🎯 ## PID Control
 Robot menggunakan algoritma Proportional-Integral-Derivative (PID) untuk mengontrol kecepatan berdasarkan jarak yang dibaca sensor ultrasonik.
-
-## Rumus Umum
-
-\[
-e(t)=SP-PV
-\]
-
-Keterangan:
-
-- `SP` = Set Point (jarak target)
-- `PV` = Process Variable (jarak aktual)
-- `e(t)` = Error
-
----
 
 ### Proportional (P)
 
-\[
-P=K_p \times e(t)
-\]
+Formula
+
+`P = Kp × e(t)`
+
+Keterangan:
+- Kp = proportional gain
+- e(t) = error
 
 Menghasilkan respon yang sebanding dengan besar error.
 
@@ -161,48 +150,40 @@ Menghasilkan respon yang sebanding dengan besar error.
 
 ### Integral (I)
 
-\[
-I=K_i \times \int e(t)\,dt
-\]
+Formula
 
-Mengakumulasi error dari waktu ke waktu sehingga mampu mengurangi steady-state error.
+`I = Ki × ∫e(t)dt`
 
 Implementasi diskrit:
 
-\[
-I=K_i \times \sum e
-\]
+`I = Ki × Σe`
+
+Mengurangi steady-state error dengan mengakumulasi error.
 
 ---
 
 ### Derivative (D)
 
-\[
-D=K_d \times \frac{de(t)}{dt}
-\]
+Formula
 
-Menghitung perubahan error untuk mengurangi overshoot.
+`D = Kd × (de/dt)`
 
 Implementasi diskrit:
 
-\[
-D=K_d \times (e_{now}-e_{previous})
-\]
+`D = Kd × (error - lastError) / dt`
+
+Memprediksi perubahan error sehingga mengurangi overshoot.
 
 ---
 
-### Output PID
+### PID Output
 
-\[
-Output=P+I+D
-\]
+`Output = P + I + D`
 
 atau
 
-\[
-Output=K_p e + K_i \int e\,dt + K_d \frac{de}{dt}
-\]
-
+`u(t) = Kp·e(t) + Ki∫e(t)dt + Kd(de(t)/dt)`
+ 
 ---
 
 ## Parameter PID
