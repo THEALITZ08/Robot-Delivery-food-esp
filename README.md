@@ -366,9 +366,6 @@ Robot Return
 - PlatformIO Extension
 - FreeRTOS
 - ESP-NOW
-- PubSubClient
-- ESP32Servo
-- ArduinoJson
 - OpenCV
 - YOLOv3
 - Python
