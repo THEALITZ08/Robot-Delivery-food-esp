@@ -131,25 +131,81 @@ RETURN --> IDLE
 
 ---
 
-# 🧠 PID Control
+# 🎯 PID Controller
 
-Robot menggunakan PID Controller berbasis sensor ultrasonik.
+Robot menggunakan algoritma Proportional-Integral-Derivative (PID) untuk mengontrol kecepatan berdasarkan jarak yang dibaca sensor ultrasonik.
 
-Formula
+## Rumus Umum
 
-```
-error = targetDistance - currentDistance
+\[
+e(t)=SP-PV
+\]
 
-P = Kp × error
+Keterangan:
 
-I = Ki × totalError
+- `SP` = Set Point (jarak target)
+- `PV` = Process Variable (jarak aktual)
+- `e(t)` = Error
 
-D = Kd × (error - lastError)
+---
 
-Output = P + I + D
-```
+### Proportional (P)
 
-Parameter
+\[
+P=K_p \times e(t)
+\]
+
+Menghasilkan respon yang sebanding dengan besar error.
+
+---
+
+### Integral (I)
+
+\[
+I=K_i \times \int e(t)\,dt
+\]
+
+Mengakumulasi error dari waktu ke waktu sehingga mampu mengurangi steady-state error.
+
+Implementasi diskrit:
+
+\[
+I=K_i \times \sum e
+\]
+
+---
+
+### Derivative (D)
+
+\[
+D=K_d \times \frac{de(t)}{dt}
+\]
+
+Menghitung perubahan error untuk mengurangi overshoot.
+
+Implementasi diskrit:
+
+\[
+D=K_d \times (e_{now}-e_{previous})
+\]
+
+---
+
+### Output PID
+
+\[
+Output=P+I+D
+\]
+
+atau
+
+\[
+Output=K_p e + K_i \int e\,dt + K_d \frac{de}{dt}
+\]
+
+---
+
+## Parameter PID
 
 | Parameter | Value |
 |-----------|------:|
@@ -157,6 +213,32 @@ Parameter
 | Ki | 0.5 |
 | Kd | 1.0 |
 
+---
+
+## PID Flow
+
+```text
+Target Distance
+        │
+        ▼
+Calculate Error
+        │
+        ▼
+P + I + D
+        │
+        ▼
+PWM Motor
+        │
+        ▼
+Robot Movement
+        │
+        ▼
+Ultrasonic Feedback
+        │
+        └──────────────┐
+                       ▼
+               Calculate Error
+```
 ---
 
 # ⚡ FreeRTOS Tasks
