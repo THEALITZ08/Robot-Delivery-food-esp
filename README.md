@@ -53,6 +53,7 @@ graph TD
     CAM -- HTTP Video Stream --> YOLO
 
 ```
+
 ## ✨ Advanced Features
  * **⚡ FreeRTOS Integration:** Sensor pembacaan, navigasi FSM, dan komunikasi ESP-NOW berjalan di *task* independen menggunakan Queue (xQueueSend & xQueueReceive) untuk arsitektur *non-blocking*.
  * **🎛️ Ultrasonic PID Closed-Loop:** Mengimplementasikan kalkulasi *Proportional-Integral-Derivative* (PID) murni berbasis jarak target untuk menghasilkan akselerasi dan pengereman yang presisi tanpa *rotary encoder*. Dilengkapi juga dengan mekanisme *Anti-Windup*.
