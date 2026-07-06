@@ -3,6 +3,8 @@
 
 A highly reliable, fault-tolerant autonomous food delivery robot. Built with a distributed architecture using three ESP32 nodes communicating via ESP-NOW. Features FreeRTOS for multitasking, a custom Ultrasonic PID controller for smooth braking, Telegram Bot integration for secure PIN verification, and Edge-to-Server Computer Vision using YOLOv3.
 
+```
+
 ---
 
 ## 🌟 Core Architecture
