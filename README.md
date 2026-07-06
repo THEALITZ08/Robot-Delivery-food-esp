@@ -365,6 +365,7 @@ Robot Return
 - Visual Studio Code
 - PlatformIO Extension
 - FreeRTOS
+- Queue
 - ESP-NOW
 - OpenCV
 - YOLOv3
