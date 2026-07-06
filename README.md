@@ -363,6 +363,7 @@ Robot Return
 # 💻 Software Stack
 
 - Visual Studio Code
+- PlatformIO Extension
 - FreeRTOS
 - ESP-NOW
 - PubSubClient
@@ -383,9 +384,7 @@ Robot Return
 - ✅ OLED UI
 - ✅ Telegram Bot
 - ✅ RSSI Monitoring
-- ✅ ArUco Navigation
 - ✅ YOLOv3
-- ✅ Retry Marker
 - ✅ Autonomous Delivery
 
 ---
