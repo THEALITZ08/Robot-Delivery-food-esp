@@ -131,7 +131,7 @@ RETURN --> IDLE
 
 ---
 
-# 🎯 ## PID Control
+# 🎯 PID Control
 Robot menggunakan algoritma Proportional-Integral-Derivative (PID) untuk mengontrol kecepatan berdasarkan jarak yang dibaca sensor ultrasonik.
 
 ### Proportional (P)
