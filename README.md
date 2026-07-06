@@ -120,7 +120,7 @@ MOVE --> OBSTACLE : Distance < Threshold
 
 OBSTACLE --> MOVE : Path Clear
 
-MOVE --> DESTINATION : Marker Detected
+MOVE --> DESTINATION : Object Detected
 
 DESTINATION --> VERIFY_PIN
 
