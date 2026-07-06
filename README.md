@@ -17,28 +17,6 @@ Unlike a traditional line follower, this robot performs autonomous navigation wh
 
 ---
 
-# 📷 Project Preview
-
-> Tambahkan foto robot di sini
-
-```
-images/
- ├── robot.jpg
- ├── rover.jpg
- ├── transmitter.jpg
- ├── esp32cam.jpg
-```
-
----
-
-# 🎥 Demo
-
-Tambahkan link YouTube
-
-https://youtube.com/......
-
----
-
 # 🧠 System Architecture
 
 Robot terdiri dari tiga node utama.
@@ -79,7 +57,6 @@ ESP32-CAM
 Responsibilities
 
 - HTTP Video Streaming
-- ArUco Detection
 - YOLOv3 Detection
 
 ---
@@ -241,13 +218,7 @@ Data
 
 # 👁 Computer Vision
 
-Robot menggunakan dua metode.
-
-## ArUco Marker
-
-- Navigation
-- Position Correction
-- Marker Retry
+Robot menggunakan metode:
 
 ## YOLOv3
 
@@ -306,7 +277,7 @@ Robot Return
 
 # 🛠 Hardware
 
-## Rover
+## Receiver
 
 | Component | GPIO |
 |-----------|------|
@@ -317,7 +288,7 @@ Robot Return
 
 ---
 
-## Controller
+## Trasnmitter
 
 | Component | GPIO |
 |-----------|------|
@@ -328,7 +299,7 @@ Robot Return
 
 # 💻 Software Stack
 
-- Arduino IDE
+- Visual Studio Code
 - FreeRTOS
 - ESP-NOW
 - PubSubClient
@@ -337,19 +308,6 @@ Robot Return
 - OpenCV
 - YOLOv3
 - Python
-
----
-
-# 📁 Project Structure
-
-```
-Controller/
-Receiver/
-ESP32CAM/
-YOLO/
-Images/
-README.md
-```
 
 ---
 
