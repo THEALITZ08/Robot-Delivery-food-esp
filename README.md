@@ -117,19 +117,22 @@ stateDiagram-v2
 
 [*] --> IDLE
 
-IDLE --> MOVE : Delivery Command
+IDLE --> JALAN : MULAI
 
-MOVE --> OBSTACLE : Distance < Threshold
+JALAN --> HALANGAN : Jarak < 20 cm
 
-OBSTACLE --> MOVE : Path Clear
+HALANGAN --> JALAN : Jalur Aman
 
-MOVE --> DESTINATION : Object Detected
+JALAN --> SAMPAI : RSSI > Threshold
 
-DESTINATION --> VERIFY_PIN
+JALAN --> ERROR : Sensor / Komunikasi Error
 
-VERIFY_PIN --> RETURN : PIN Valid
+ERROR --> JALAN : Recovery
 
-RETURN --> IDLE
+SAMPAI --> SELESAI : PIN Valid (BUKA)
+
+SELESAI --> IDLE : PULANG
+
 ```
 
 ---
