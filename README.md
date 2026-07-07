@@ -223,6 +223,11 @@ Ultrasonic Feedback
 ```
 ---
 
+# ​🛡️ Fail-Safe Mechanism: 
+Memiliki sistem deteksi error otomatis. Jika terjadi timeout komunikasi ESP-NOW lebih dari 1000ms atau pembacaan sensor ultrasonik tidak valid, robot akan otomatis menghentikan motor dan menampilkan indikator error secara visual untuk mencegah kecelakaan (Runaway Evasion).
+
+---
+
 # ⚡ FreeRTOS Tasks
 
 | Task | Function |
@@ -288,7 +293,6 @@ Robot menggunakan metode:
 
 - Object Detection
 - Human Detection
-- Delivery Validation
 
 ---
 
