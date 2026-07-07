@@ -463,3 +463,13 @@ Robot Return
 - ✅ Autonomous Delivery
 
 ---
+
+# 📈 Future Development
+
+- Dynamic obstacle avoidance
+- Battery level monitoring
+- Automatic docking
+- Multiple rover communication
+- SLAM-based navigation
+
+---
