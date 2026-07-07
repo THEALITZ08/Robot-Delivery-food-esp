@@ -58,13 +58,13 @@ Responsibilities
 
 - HTTP Video Streaming
 - YOLOv3 Detection
+- Otomatisasi deteksi objek menggunakan YOLOv3 dijalankan pada laptop. ESP32-CAM hanya berfungsi sebagai perangkat yang mengirimkan video secara real-time melalui HTTP stream menuju laptop untuk diproses oleh model YOLOv3
 
 ---
 
 # 🧩 System Topology
 
 ```mermaid
-graph TD
 
 USER[User]
 
@@ -190,9 +190,9 @@ atau
 
 | Parameter | Value |
 |-----------|------:|
-| Kp | 3.0 |
-| Ki | 0.5 |
-| Kd | 1.0 |
+| Kp | 3.72 |
+| Ki | 2.58 |
+| Kd | 1.67 |
 
 ---
 
