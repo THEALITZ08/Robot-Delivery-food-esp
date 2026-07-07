@@ -226,9 +226,8 @@ Ultrasonic Feedback
 
 | Task | Function |
 |------|----------|
-| Navigation Task | FSM Navigation |
-| ESP-NOW Task | Communication |
-| OLED Task | Animation |
+| FSM Task |Robot state management |
+| ESP-NOW Callback | Receive wireless commands |
 | Sensor Task | Ultrasonic |
 | Queue Task | Command Processing |
 
