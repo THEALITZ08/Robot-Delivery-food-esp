@@ -57,8 +57,10 @@ ESP32-CAM
 Responsibilities
 
 - HTTP Video Streaming
-- YOLOv3 Detection
-- Otomatisasi deteksi objek menggunakan YOLOv3 dijalankan pada laptop. ESP32-CAM hanya berfungsi sebagai perangkat yang mengirimkan video secara real-time melalui HTTP stream menuju laptop untuk diproses oleh model YOLOv3
+- Image Acquisition
+
+Notes:
+- Inferensi YOLOv3 dijalankan pada laptop menggunakan OpenCV dan Python.
 
 ---
 
@@ -224,7 +226,7 @@ Ultrasonic Feedback
 ---
 
 # ​🛡️ Fail-Safe Mechanism: 
-Memiliki sistem deteksi error otomatis. Jika terjadi timeout komunikasi ESP-NOW lebih dari 1000ms atau pembacaan sensor ultrasonik tidak valid, robot akan otomatis menghentikan motor dan menampilkan indikator error secara visual untuk mencegah kecelakaan (Runaway Evasion).
+Memiliki sistem deteksi error otomatis. Jika terjadi timeout komunikasi ESP-NOW lebih dari 1000ms atau pembacaan sensor ultrasonik tidak valid, robot akan otomatis menghentikan motor dan menampilkan indikator error secara visual untuk mencegah kecelakaan (Runaway condition).
 
 ---
 
@@ -426,7 +428,7 @@ Robot Return
 
 ---
 
-## Trasnmitter
+## Transmitter
 
 | Component | GPIO |
 |-----------|------|
