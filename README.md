@@ -243,7 +243,11 @@ Memiliki sistem deteksi error otomatis. Jika terjadi timeout komunikasi ESP-NOW 
 # 📦 Queue Communication
 
 ```
-Telegram
+Telegram Bot
+
+↓
+
+ESP32 Controller
 
 ↓
 
@@ -251,18 +255,84 @@ ESP-NOW
 
 ↓
 
+ESP-NOW Callback
+
+↓
+
 Queue
 
 ↓
 
-FSM
+Finite State Machine (FSM)
 
 ↓
 
-Motor
+Motor Driver
+
 ```
 
 Queue digunakan supaya setiap command diproses secara berurutan tanpa blocking.
+
+---
+# 🛠 Tantangan dan Solusi
+
+## 1. Timeout Komunikasi ESP-NOW
+
+Tantangan
+
+Robot dapat kehilangan komunikasi akibat paket ESP-NOW tidak diterima dalam waktu tertentu.
+
+Solusi
+
+Menambahkan mekanisme timeout selama 1000 ms. Apabila komunikasi terputus, robot berpindah ke state ERROR, menghentikan motor, dan kembali ke mode operasi ketika komunikasi telah pulih.
+
+---
+
+## 2. Pembacaan Sensor Ultrasonik Tidak Valid
+
+Tantangan
+
+Sensor HC-SR04 dapat menghasilkan pembacaan tidak valid (timeout atau jarak di luar rentang).
+
+Solusi
+
+Melakukan validasi data sensor dan menghitung jumlah error secara berurutan. Robot akan masuk ke mode fail-safe apabila jumlah error melebihi batas yang ditentukan.
+
+---
+
+## 3. Pemrosesan Perintah Tanpa Mengganggu FSM
+
+Tantangan
+
+Perintah yang diterima melalui ESP-NOW tidak boleh langsung mengubah state robot karena dapat menyebabkan konflik dengan proses navigasi.
+
+Solusi
+
+Menggunakan FreeRTOS Queue sebagai media komunikasi antara callback ESP-NOW dan FSM sehingga setiap perintah diproses secara berurutan.
+
+---
+
+## 4. Pengendalian Kecepatan Robot
+
+Tantangan
+
+Kecepatan robot harus menyesuaikan jarak terhadap target agar tidak menabrak maupun berhenti terlalu jauh.
+
+Solusi
+
+Mengimplementasikan algoritma PID untuk mengatur nilai PWM motor berdasarkan error jarak yang dibaca sensor ultrasonik.
+
+---
+
+## 5. Keterbatasan Komputasi ESP32-CAM
+
+Tantangan
+
+ESP32-CAM tidak memiliki sumber daya yang cukup untuk menjalankan inferensi YOLOv3 secara langsung.
+
+Solusi
+
+ESP32-CAM hanya digunakan sebagai perangkat HTTP video streaming, sedangkan proses inferensi YOLOv3 dijalankan pada laptop menggunakan OpenCV dan Python.
 
 ---
 
