@@ -228,7 +228,7 @@ Ultrasonic Feedback
 |------|----------|
 | FSM Task |Robot state management and Navigation |
 | ESP-NOW Callback | Receive wireless commands |
-| Ultrasonic Task | Distance |
+| Ultrasonic Task | Distance measurement |
 | Queue  | Command buffering between ESP-NOW and FSM |
 | Monitoring Task | System monitoring and debugging |
 
