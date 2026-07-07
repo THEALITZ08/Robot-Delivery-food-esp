@@ -65,6 +65,7 @@ Responsibilities
 # 🧩 System Topology
 
 ```mermaid
+graph TD
 
 USER[User]
 
