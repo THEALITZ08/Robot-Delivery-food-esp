@@ -226,10 +226,11 @@ Ultrasonic Feedback
 
 | Task | Function |
 |------|----------|
-| FSM Task |Robot state management |
+| FSM Task |Robot state management and Navigation |
 | ESP-NOW Callback | Receive wireless commands |
-| Sensor Task | Ultrasonic |
-| Queue Task | Command Processing |
+| Ultrasonic Task | Distance |
+| Queue  | Command buffering between ESP-NOW and FSM |
+| Monitoring Task | System monitoring and debugging |
 
 ---
 
