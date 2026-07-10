@@ -471,6 +471,7 @@ Robot Return
 - FreeRTOS
 - Queue
 - ESP-NOW
+- ArduinoOTA
 - OpenCV
 - YOLOv3
 - Python
@@ -488,6 +489,7 @@ Robot Return
 - ✅ RSSI Monitoring
 - ✅ YOLOv3
 - ✅ Autonomous Delivery
+- ✅ OTA firmware update
 
 ---
 
