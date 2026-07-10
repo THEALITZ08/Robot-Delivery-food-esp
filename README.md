@@ -341,6 +341,30 @@ ESP32-CAM hanya digunakan sebagai perangkat HTTP video streaming, sedangkan pros
 
 ---
 
+## 6. Ambiguitas Pembacaan Sensor Jarak
+
+Tantangan
+
+Sensor ultrasonik HC-SR04 tidak dapat membedakan dua kondisi yang secara fisik menghasilkan pembacaan serupa: keberadaan penghalang di jalur navigasi (obstacle) dan posisi robot yang telah sampai di depan titik tujuan. Pada pengujian awal, ketika prioritas deteksi hanya berdasarkan jarak, robot secara keliru mendeteksi kondisi sebagai HALANGAN meskipun secara aktual robot telah berada pada titik tujuan, sehingga transisi ke state SAMPAI tidak tereksekusi.
+
+Solusi
+
+Untuk mengatasi ambiguitas tersebut, sistem menggabungkan pembacaan sensor ultrasonik dengan indikator kekuatan sinyal (RSSI) dari komunikasi ESP-NOW sebagai data pelengkap. Ketika RSSI menunjukkan robot berada pada jangkauan dekat dengan node tujuan namun nilai RSSI belum sepenuhnya melewati ambang batas utama, sementara jarak yang terbaca juga berada pada rentang dekat, sistem akan memprioritaskan interpretasi tersebut sebagai kondisi SAMPAI. Pendekatan ini memungkinkan sistem melakukan disambiguasi antara kondisi obstacle dan kondisi telah sampai tujuan menggunakan dua sumber data yang saling melengkapi.
+
+---
+
+## 7. Integrasi OTA dengan Sistem Multi-Task RTOS
+
+Tantangan
+
+Proses tuning PID awalnya mengharuskan robot dicabut dan dicolokkan USB berulang kali setiap ingin mengubah parameter, yang cukup merepotkan mengingat robot bersifat mobile. Solusinya adalah menambahkan fitur OTA (Over-The-Air) update. Namun, integrasi OTA dengan sistem yang sudah berjalan di banyak task RTOS ternyata memunculkan masalah baru: koneksi upload sering terputus (WinError 10053) secara acak, dan tampilan OLED mengalami glitch karena progress bar OTA bertabrakan dengan animasi ekspresi robot yang terus di-render oleh FSM.
+
+Solusi
+
+Ditambahkan flag otaMode dan mekanisme vTaskSuspend() untuk menghentikan seluruh task (FSM, sensor, monitoring) selama proses OTA berlangsung, sehingga CPU dan akses ke display tidak lagi diperebutkan oleh dua proses berbeda secara bersamaan. Pada percobaan awal ditemukan bug tambahan: flag otaMode yang secara tidak sengaja default bernilai true menyebabkan seluruh sistem tidak pernah berjalan normal, serta task yang belum di-resume dengan benar apabila proses OTA gagal di tengah jalan. Setelah kedua isu tersebut diperbaiki, proses OTA berhasil berjalan stabil tanpa mengganggu tampilan maupun performa robot. 
+
+---
+
 # 📡 Wireless Communication
 
 Protocol
