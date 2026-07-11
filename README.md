@@ -129,7 +129,7 @@ JALAN --> HALANGAN : Jarak < 20 cm
 
 HALANGAN --> JALAN : Jalur Aman
 
-JALAN --> SAMPAI : RSSI > Threshold
+JALAN --> SAMPAI : RSSI > Threshold ATAU (Jarak < 20cm & RSSI Mendekati Threshold)
 
 JALAN --> ERROR : Sensor / Komunikasi Error
 
