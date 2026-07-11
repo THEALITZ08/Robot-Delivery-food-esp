@@ -255,6 +255,7 @@ Memiliki sistem deteksi error otomatis. Jika terjadi timeout komunikasi ESP-NOW 
 | Ultrasonic Task | Distance measurement |
 | Queue  | Command buffering between ESP-NOW and FSM |
 | Monitoring Task | System monitoring and debugging |
+| OTA Task | Handles firmware updates and suspends/resumes RTOS tasks during OTA |
 
 ---
 
