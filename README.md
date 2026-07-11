@@ -67,6 +67,7 @@ Notes:
 # 🧩 System Topology
 
 ```mermaid
+
 graph TD
 
 USER[User]
@@ -77,17 +78,19 @@ CTRL[ESP32 Controller]
 
 ROVER[ESP32 Rover]
 
-CAM[ESP32-CAM]
-
-YOLO[YOLOv3]
-
-OLED[OLED Display]
+FSM[FSM Task]
 
 SONAR[HC-SR04]
 
 PID[PID Controller]
 
 MOTOR[L298N Driver]
+
+OLED[OLED Display]
+
+CAM[ESP32-CAM]
+
+YOLO[YOLOv3]
 
 USER --> TG
 
@@ -97,15 +100,18 @@ CTRL -->|ESP-NOW| ROVER
 
 ROVER -->|RSSI| CTRL
 
-ROVER --> SONAR
+ROVER --> FSM
+
+FSM --> SONAR
 
 SONAR --> PID
 
 PID --> MOTOR
 
-ROVER --> OLED
+FSM --> OLED
 
 CAM -->|HTTP Stream| YOLO
+
 ```
 
 ---
@@ -205,26 +211,33 @@ atau
 ## PID Flow
 
 ```text
+
 Target Distance
+        │
+        ▼
+HC-SR04 Measurement
         │
         ▼
 Calculate Error
         │
         ▼
-P + I + D
+PID Controller
         │
         ▼
-PWM Motor
+PWM Output
         │
         ▼
-Robot Movement
+Motor Driver
         │
         ▼
-Ultrasonic Feedback
+Pergerakan Robot
         │
-        └──────────────┐
-                       ▼
-               Calculate Error
+        ▼
+Pembacaan HC-SR04
+        └───────────────┐
+                        ▼
+                Calculate Error
+
 ```
 ---
 
@@ -249,6 +262,7 @@ Memiliki sistem deteksi error otomatis. Jika terjadi timeout komunikasi ESP-NOW 
 Robot mendukung pembaruan firmware melalui jaringan WiFi menggunakan fitur OTA (Over-The-Air), sehingga proses pengembangan dan tuning parameter tidak lagi memerlukan koneksi USB Manual
 
 ## Mekanisme OTA
+
 PlatformIO
 
 ↓
@@ -307,15 +321,19 @@ ESP-NOW
 
 ↓
 
-ESP-NOW Callback
+ESP-NOW Receive Callback
 
 ↓
 
-Queue
+xQueueSendFromISR()
 
 ↓
 
-Finite State Machine (FSM)
+FreeRTOS Queue
+
+↓
+
+FSM Task
 
 ↓
 
@@ -323,9 +341,26 @@ Motor Driver
 
 ```
 
-Queue digunakan supaya setiap command diproses secara berurutan tanpa blocking.
+Queue digunakan supaya setiap command diproses secara berurutan tanpa blocking
 
 ---
+
+# 📊 Monitoring Sistem
+
+Robot secara berkala menampilkan informasi debugging melalui Serial Monitor.
+
+Data yang dipantau meliputi:
+
+- State FSM
+- Nilai RSSI
+- Jarak HC-SR04
+- Jenis Error Aktif
+- Status Recovery
+
+Monitoring ini digunakan untuk mempermudah proses debugging selama pengembangan.
+
+---
+
 # 🛠 Tantangan dan Solusi
 
 ## 1. Timeout Komunikasi ESP-NOW
@@ -400,15 +435,43 @@ Untuk mengatasi ambiguitas tersebut, sistem menggabungkan pembacaan sensor ultra
 
 ---
 
-## 7. Integrasi OTA dengan Sistem Multi-Task RTOS
+## 7. Integrasi OTA dengan Sistem Multi-Task FreeRTOS
 
 Tantangan
 
-Proses tuning PID awalnya mengharuskan robot dicabut dan dicolokkan USB berulang kali setiap ingin mengubah parameter, yang cukup merepotkan mengingat robot bersifat mobile. Solusinya adalah menambahkan fitur OTA (Over-The-Air) update. Namun, integrasi OTA dengan sistem yang sudah berjalan di banyak task RTOS ternyata memunculkan masalah baru: koneksi upload sering terputus (WinError 10053) secara acak, dan tampilan OLED mengalami glitch karena progress bar OTA bertabrakan dengan animasi ekspresi robot yang terus di-render oleh FSM.
+Robot memerlukan proses tuning PID yang cukup sering sehingga firmware harus diunggah berkali-kali. Menggunakan kabel USB setiap kali melakukan perubahan cukup merepotkan karena robot bersifat mobile. Solusinya adalah menambahkan fitur OTA (Over-The-Air).
+
+Namun setelah OTA diintegrasikan ke sistem FreeRTOS, muncul beberapa masalah baru.
+
+Upload firmware sering gagal (WinError 10053).
+
+Progress OTA bertabrakan dengan animasi OLED yang masih dijalankan oleh FSM.
+
+Beberapa task masih mengakses resource yang sama ketika proses update berlangsung.
+
 
 Solusi
 
-Ditambahkan flag otaMode dan mekanisme vTaskSuspend() untuk menghentikan seluruh task (FSM, sensor, monitoring) selama proses OTA berlangsung, sehingga CPU dan akses ke display tidak lagi diperebutkan oleh dua proses berbeda secara bersamaan. Pada percobaan awal ditemukan bug tambahan: flag otaMode yang secara tidak sengaja default bernilai true menyebabkan seluruh sistem tidak pernah berjalan normal, serta task yang belum di-resume dengan benar apabila proses OTA gagal di tengah jalan. Setelah kedua isu tersebut diperbaiki, proses OTA berhasil berjalan stabil tanpa mengganggu tampilan maupun performa robot. 
+OTA dijalankan menggunakan task khusus (otaTask) yang secara terus menerus menangani proses ArduinoOTA.handle().
+
+Ketika proses update dimulai:
+
+Mode OTA diaktifkan.
+
+FSM Task dihentikan sementara.
+
+Ultrasonic Task dihentikan sementara.
+
+Monitoring Task dihentikan sementara.
+
+OLED menampilkan tampilan khusus proses OTA.
+
+
+Setelah proses update selesai maupun gagal:
+
+Seluruh task dijalankan kembali.
+
+Robot kembali ke kondisi normal.
 
 ---
 
@@ -417,6 +480,10 @@ Ditambahkan flag otaMode dan mekanisme vTaskSuspend() untuk menghentikan seluruh
 Protocol
 
 ESP-NOW
+
+Role
+
+peer to peer Communications
 
 Channel
 
