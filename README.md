@@ -245,6 +245,53 @@ Memiliki sistem deteksi error otomatis. Jika terjadi timeout komunikasi ESP-NOW 
 
 ---
 
+# 📡 Over-The-Air (OTA) Update
+Robot mendukung pembaruan firmware melalui jaringan WiFi menggunakan fitur OTA (Over-The-Air), sehingga proses pengembangan dan tuning parameter tidak lagi memerlukan koneksi USB Manual
+
+## Mekanisme OTA
+PlatformIO
+
+↓
+
+WiFi
+
+↓
+
+OTA Task
+
+↓
+
+Suspend Task RTOS
+
+↓
+
+Firmware Upload
+
+↓
+
+Resume Task
+
+↓
+
+Robot Berjalan Kembali
+
+## Cara Kerja
+
+- OTA berjalan pada task terpisah.
+- Saat proses upload dimulai, sistem mengaktifkan `otaMode`.
+- Task navigasi, pembacaan sensor, dan monitoring dihentikan sementara menggunakan `vTaskSuspend()`.
+- OLED menampilkan progress OTA tanpa terganggu animasi FSM.
+- Setelah upload selesai, seluruh task diaktifkan kembali menggunakan `vTaskResume()`.
+
+## Keuntungan
+
+- Tidak perlu mencabut dan memasang kabel USB setiap kali melakukan perubahan program.
+- Proses tuning PID menjadi lebih cepat.
+- Menghindari konflik akses CPU selama proses upload firmware.
+- Mencegah glitch pada tampilan OLED ketika OTA berlangsung.
+
+---
+
 # 📦 Queue Communication
 
 ```
